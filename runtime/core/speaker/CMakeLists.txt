@@ -13,6 +13,7 @@ endif()
 
 add_library(speaker STATIC ${speaker_srcs})
 target_link_libraries(speaker PUBLIC frontend)
+target_compile_options(speaker PRIVATE -Wno-sign-compare -Wno-unused-private-field)
 
 if(ONNX)
   target_link_libraries(speaker PUBLIC onnxruntime)

@@ -13,7 +13,7 @@ set(FETCHCONTENT_BASE_DIR ${fc_base})
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -pthread -fPIC")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -pthread -fPIC -Wno-implicit-exception-spec-mismatch -Wno-macro-redefined -Wno-sign-compare")
 
 # Include all dependency
 if(ONNX)
@@ -28,3 +28,7 @@ add_subdirectory(utils)
 add_subdirectory(frontend)
 add_subdirectory(speaker)
 add_subdirectory(bin)
+
+add_library(wespeaker INTERFACE)
+target_include_directories(wespeaker INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(wespeaker INTERFACE utils frontend speaker)
