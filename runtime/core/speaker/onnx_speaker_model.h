@@ -48,6 +48,8 @@ class OnnxSpeakerModel : public SpeakerModel {
   std::vector<const char*> input_names_;
   std::vector<const char*> output_names_;
   int embedding_size_ = 0;
+  std::string inputName_;
+  std::string outputName_;
 };
 
 }  // namespace wespeaker

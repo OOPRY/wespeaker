@@ -19,6 +19,10 @@
 #include "glog/logging.h"
 #include "speaker/onnx_speaker_model.h"
 #include "utils/utils.h"
+#include <iostream>
+#ifdef __APPLE__
+#include <coreml_provider_factory.h>
+#endif
 
 namespace wespeaker {
 
@@ -28,6 +32,12 @@ Ort::SessionOptions OnnxSpeakerModel::session_options_ = Ort::SessionOptions();
 
 void OnnxSpeakerModel::InitEngineThreads(int num_threads) {
   session_options_.SetIntraOpNumThreads(num_threads);
+  #ifdef __APPLE__
+  uint32_t coreml_flags = 0;
+  coreml_flags |= COREML_FLAG_ONLY_ENABLE_DEVICE_WITH_ANE;
+
+  Ort::ThrowOnError(OrtSessionOptionsAppendExecutionProvider_CoreML(session_options_, coreml_flags));
+  #endif
 }
 
 #ifdef USE_GPU
@@ -55,17 +65,17 @@ OnnxSpeakerModel::OnnxSpeakerModel(const std::string& model_path) {
   // NOTE(cdliang): for speaker model, num_nodes is 1.
   CHECK_EQ(num_nodes, 1);
   input_names_.resize(num_nodes);
-  char* name = speaker_session_->GetInputName(0, allocator);
-  input_names_[0] = name;
-  LOG(INFO) << "Ouput name: " << name;
+  inputName_ = speaker_session_->GetInputNameAllocated(0, allocator).get();
+  input_names_[0] = inputName_.c_str();
+  LOG(INFO) << "Input name: " << inputName_<<std::endl;
 
   // 2.2. output info
   num_nodes = speaker_session_->GetOutputCount();
   CHECK_EQ(num_nodes, 1);
   output_names_.resize(num_nodes);
-  name = speaker_session_->GetOutputName(0, allocator);
-  output_names_[0] = name;
-  LOG(INFO) << "Output name: " << name;
+  outputName_ = speaker_session_->GetOutputNameAllocated(0, allocator).get();
+  output_names_[0] = outputName_.c_str();
+  LOG(INFO) << "Output name: " << outputName_<<std::endl;
 }
 
 void OnnxSpeakerModel::ExtractEmbedding(

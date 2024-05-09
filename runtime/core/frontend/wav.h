@@ -30,6 +30,8 @@
 #include "gflags/gflags.h"
 #include "glog/logging.h"
 
+#include <iostream>
+
 DEFINE_int32(pcm_sample_rate, 16000, "pcm data sample rate");
 
 namespace wenet {
@@ -66,7 +68,9 @@ struct WavHeader {
 class WavReader : public AudioReader {
  public:
   WavReader() {}
-  explicit WavReader(const std::string& filename) { Open(filename); }
+  explicit WavReader(const std::string& filename) { 
+    Open(filename); 
+  }
 
   bool Open(const std::string& filename) {
     FILE* fp = fopen(filename.c_str(), "rb");

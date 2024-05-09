@@ -19,6 +19,7 @@
 #include "speaker/speaker_engine.h"
 #include "utils/timer.h"
 #include "utils/utils.h"
+#include <chrono>
 
 DEFINE_string(enroll_wav, "", "First wav as enroll wav.");
 DEFINE_string(test_wav, "", "Second wav as test wav.");
@@ -35,13 +36,13 @@ int main(int argc, char* argv[]) {
   google::InitGoogleLogging(argv[0]);
 
   // init model
-  LOG(INFO) << FLAGS_speaker_model_path;
-  LOG(INFO) << "Init model ...";
+  std::cout << FLAGS_speaker_model_path<<std::endl;
+  std::cout << "Init model ..."<<std::endl;
   auto speaker_engine = std::make_shared<wespeaker::SpeakerEngine>(
       FLAGS_speaker_model_path, FLAGS_fbank_dim, FLAGS_sample_rate,
       FLAGS_embedding_size, FLAGS_SamplesPerChunk);
   int embedding_size = speaker_engine->EmbeddingSize();
-  LOG(INFO) << "embedding size: " << embedding_size;
+  std::cout << "embedding size: " << embedding_size<<std::endl;
   // read enroll wav/pcm data
   auto data_reader = wenet::ReadAudioFile(FLAGS_enroll_wav);
   int16_t* enroll_data = const_cast<int16_t*>(data_reader->data());
@@ -50,8 +51,10 @@ int main(int argc, char* argv[]) {
   std::vector<float> enroll_embs(embedding_size, 0);
   int enroll_wave_dur = static_cast<int>(static_cast<float>(enroll_samples) /
                                          data_reader->sample_rate() * 1000);
-  LOG(INFO) << enroll_wave_dur;
+  std::cout << enroll_wave_dur<<std::endl;
+  auto time = std::chrono::high_resolution_clock::now();
   speaker_engine->ExtractEmbedding(enroll_data, enroll_samples, &enroll_embs);
+  std::cout<<"extract embedding time: "<<std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now()-time).count()<<"ms"<<std::endl;
   // test wav
   auto test_data_reader = wenet::ReadAudioFile(FLAGS_test_wav);
   int16_t* test_data = const_cast<int16_t*>(test_data_reader->data());
@@ -59,16 +62,18 @@ int main(int argc, char* argv[]) {
   std::vector<float> test_embs(embedding_size, 0);
   int test_wave_dur = static_cast<int>(static_cast<float>(test_samples) /
                                        test_data_reader->sample_rate() * 1000);
-  LOG(INFO) << test_wave_dur;
+  std::cout << test_wave_dur<<std::endl;
+  time = std::chrono::high_resolution_clock::now();
   speaker_engine->ExtractEmbedding(test_data, test_samples, &test_embs);
+  std::cout<<"extract embedding time: "<<std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now()-time).count()<<"ms"<<std::endl;
   float cosine_score;
-  LOG(INFO) << "compute score ...";
+  std::cout << "compute score ..."<<std::endl;
   cosine_score = speaker_engine->CosineSimilarity(enroll_embs, test_embs);
-  LOG(INFO) << "Cosine socre: " << cosine_score;
+  std::cout << "Cosine socre: " << cosine_score<<std::endl;
   if (cosine_score >= FLAGS_threshold) {
-    LOG(INFO) << "It's the same speaker!";
+    std::cout << "It's the same speaker!"<<std::endl;
   } else {
-    LOG(INFO) << "Warning! It's a different speaker.";
+    std::cout << "Warning! It's a different speaker."<<std::endl;
   }
   return 0;
 }
