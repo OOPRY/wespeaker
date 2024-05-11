@@ -1,0 +1,3 @@
+[submodule "runtime/onnxruntime/lib/eigen"]
+	path = runtime/onnxruntime/lib/eigen
+	url = git@gitlab.com:libeigen/eigen.git

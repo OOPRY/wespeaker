@@ -24,6 +24,7 @@ include(gflags)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 # build all libraries
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/lib/eigen)
 add_subdirectory(utils)
 add_subdirectory(frontend)
 add_subdirectory(speaker)

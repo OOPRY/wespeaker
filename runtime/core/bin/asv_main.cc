@@ -38,9 +38,8 @@ int main(int argc, char* argv[]) {
   // init model
   std::cout << FLAGS_speaker_model_path<<std::endl;
   std::cout << "Init model ..."<<std::endl;
-  auto speaker_engine = std::make_shared<wespeaker::SpeakerEngine>(
-      FLAGS_speaker_model_path, FLAGS_fbank_dim, FLAGS_sample_rate,
-      FLAGS_embedding_size, FLAGS_SamplesPerChunk);
+  auto speaker_engine = std::make_shared<wespeaker::SpeakerEngine<256>>(
+      FLAGS_speaker_model_path, FLAGS_fbank_dim, FLAGS_sample_rate, FLAGS_SamplesPerChunk);
   int embedding_size = speaker_engine->EmbeddingSize();
   std::cout << "embedding size: " << embedding_size<<std::endl;
   // read enroll wav/pcm data

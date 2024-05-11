@@ -12,7 +12,7 @@ if(MNN)
 endif()
 
 add_library(speaker STATIC ${speaker_srcs})
-target_link_libraries(speaker PUBLIC frontend)
+target_link_libraries(speaker PUBLIC frontend  Eigen3::Eigen)
 target_compile_options(speaker PRIVATE -Wno-sign-compare -Wno-unused-private-field)
 
 if(ONNX)

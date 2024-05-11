@@ -42,9 +42,8 @@ int g_total_extract_time = 0;
 
 void extract_emb(std::pair<std::string, std::string> wav) {
   // init model
-  auto speaker_engine = std::make_shared<wespeaker::SpeakerEngine>(
-      FLAGS_speaker_model_path, FLAGS_fbank_dim, FLAGS_sample_rate,
-      FLAGS_embedding_size, FLAGS_samples_per_chunk);
+  auto speaker_engine = std::make_shared<wespeaker::SpeakerEngine<256>>(
+      FLAGS_speaker_model_path, FLAGS_fbank_dim, FLAGS_sample_rate, FLAGS_samples_per_chunk);
   int embedding_size = speaker_engine->EmbeddingSize();
   LOG(INFO) << "embedding size: " << embedding_size;
   // read wav.scp

@@ -33,10 +33,10 @@ Ort::SessionOptions OnnxSpeakerModel::session_options_ = Ort::SessionOptions();
 void OnnxSpeakerModel::InitEngineThreads(int num_threads) {
   session_options_.SetIntraOpNumThreads(num_threads);
   #ifdef __APPLE__
-  uint32_t coreml_flags = 0;
-  coreml_flags |= COREML_FLAG_ONLY_ENABLE_DEVICE_WITH_ANE;
+  //uint32_t coreml_flags = 0;
+  //coreml_flags |= COREML_FLAG_ONLY_ENABLE_DEVICE_WITH_ANE;
 
-  Ort::ThrowOnError(OrtSessionOptionsAppendExecutionProvider_CoreML(session_options_, coreml_flags));
+  ////Ort::ThrowOnError(OrtSessionOptionsAppendExecutionProvider_CoreML(session_options_, coreml_flags));
   #endif
 }
 
